@@ -38,7 +38,7 @@ This Arduino-based health monitoring system is designed to measure vital signs s
 
 ## Documentation
 
-Detailed documentation on how the system operates, including sensor functionalities, data collection, and display mechanisms, can be found in the `Documentation` directory.
+Detailed documentation on how the system operates, including sensor functionalities, data collection, and display mechanisms, can be found in the data:text/txt;base64, directory.
 
 ## Contributing
 
