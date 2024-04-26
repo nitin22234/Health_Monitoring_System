@@ -1,0 +1,76 @@
+#include "DHT.h"
+#include <Wire.h>
+#define USE_ARDUINO_INTERRUPTS true
+// Include necessary libraries
+#include <PulseSensorPlayground.h>
+int bpm=0;
+ 
+// Constants
+const int PULSE_SENSOR_PIN = 0;  // Analog PIN where the PulseSensor is connected
+const int LED_PIN = 13;          // On-board LED PIN
+const int THRESHOLD = 550;       // Threshold for detecting a heartbeat
+ PulseSensorPlayground pulseSensor;  
+
+#define DHTPIN 7     // Digital pin connected to the DHT sensor
+#define DHTTYPE DHT11   // DHT 11
+
+
+DHT dht(DHTPIN, DHTTYPE); //Initialize the DHT component
+  // 'S' Signal pin connected to A0
+
+int Signal;                // Store incoming ADC data. Value can range from 0-1024
+int Threshold = 550; 
+void setup() {
+  	pinMode(LED_BUILTIN,OUTPUT);  
+  Serial.begin(9600);
+  Serial.println("DHTxx test!");
+  pulseSensor.analogInput(PULSE_SENSOR_PIN);
+  pulseSensor.blinkOnPulse(LED_PIN);
+  pulseSensor.setThreshold(THRESHOLD);
+ 
+ 
+  // Check if PulseSensor is initialized
+  if (pulseSensor.begin()) 
+  {
+    Serial.println("PulseSensor object created successfully!");
+  }
+
+  dht.begin();
+}
+
+void loop() {
+
+  // Wait a few seconds between measurements.
+
+  // Reading temperature or humidity takes about 250 milliseconds!
+  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+  float h = dht.readHumidity();
+  // Read temperature as Celsius (the default)
+  float t = dht.readTemperature();
+  // Read temperature as Fahrenheit (isFahrenheit = true)
+  float f = dht.readTemperature(true);
+ int currentBPM = pulseSensor.getBeatsPerMinute();
+
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t) || isnan(f)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }    
+
+  //String message = (String) "Humidity: "+h+"% Temperature: " +t+"°C";
+  
+ 
+    if (pulseSensor.sawStartOfBeat()) 
+  {
+    Serial.println("♥ A HeartBeat Happened!");
+    Serial.print("BPM: ");
+    Serial.print(currentBPM);
+    bpm = currentBPM;
+  }
+  Serial.print(" ");
+
+   String message = (String) "Humidity: "+h+"% Temperature: " +t+"°C"+" Pulse "+bpm+" BPM";
+ Serial.println(message);
+
+  delay(2000);
+}
